@@ -1,9 +1,28 @@
 
-# solution for 1st assignment in the 3rd "python for everybody" course
+"""
+solution for the 1st assignment in the 3rd "python for everybody" course.
+This assignment is handed out after studying regular expressions.
+The solution uses the `re` module which adds regexp functionality to python
 
-# testing with "regex_sum_42.txt" data file
+The program prompts the user for a text file name and then searches for integers inside the text.
+The program then computes and prints the sum of these integers.
+
+The way it works is by using a file handler (output of the open function) and iterating over its rows.
+For each row, a list of strings that represents integers is created using the regexp `findall` function.
+Then each string is parsed into an integer and added to a larger list of integers from all of the lines.
+At the end the sum of this list is computed and printed.
+
+At the end of the file there is a commented out line that represents a super short and confusing solution.
+The short solution uses list comprehension and the file handler's read method which extracts all of the text at once.
+
+You need to test this assignment twice:
+Once with the `regex_sum_42.txt` (which will be the default file chosen if the user presses enter)
+And the second time with `regex_sum_?????.txt` - a unique generated text that each student receives.
+"""
+
 
 import re
+
 
 file_name = input('Enter file name: ')
 
