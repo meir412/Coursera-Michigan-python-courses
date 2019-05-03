@@ -21,7 +21,8 @@ try:
 
             line_list = line.split()
             date = line_list[5]
-            hour = date.split(sep=':')[0]
+            hour = date[:2]
+            # hour = date.split(sep=':')[0]   # this is also a good solution but invoked an exception in py4e autograder
             hour_frequency_db[hour] = hour_frequency_db.get(hour,0) + 1
 
     # most_common_hour = None         # this code can sort the pairs by the frequency and not by the hour
