@@ -7,9 +7,15 @@ db_handler = db_connection.cursor()
 db_handler.executescript('''
 DROP TABLE IF EXISTS Artist;
 DROP TABLE IF EXISTS Album;
+DROP TABLE IF EXISTS Genre;
 DROP TABLE IF EXISTS Track;
 
 CREATE TABLE Artist (
+    id  INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+    name    TEXT UNIQUE
+);
+
+CREATE TABLE Genre (
     id  INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
     name    TEXT UNIQUE
 );
@@ -25,6 +31,7 @@ CREATE TABLE Track (
         AUTOINCREMENT UNIQUE,
     title TEXT  UNIQUE,
     album_id  INTEGER,
+    genre_id  INTEGER,
     len INTEGER, rating INTEGER, count INTEGER
 );
 ''')
@@ -51,11 +58,12 @@ for track_data in all_tracks_data:
     name = xml_lookup(track_data, 'Name')
     artist = xml_lookup(track_data, 'Artist')
     album = xml_lookup(track_data, 'Album')
+    genre = xml_lookup(track_data, 'Genre')
     count = xml_lookup(track_data, 'Play Count')
     rating = xml_lookup(track_data, 'Rating')
     length = xml_lookup(track_data, 'Total Time')
 
-    if name is None or artist is None or album is None:
+    if name is None or artist is None or album is None or genre is None:
         continue
 
     db_handler.execute('''
@@ -73,25 +81,19 @@ for track_data in all_tracks_data:
     album_id = db_handler.fetchone()[0]
 
     db_handler.execute('''
+    INSERT OR IGNORE INTO Genre (name)
+    VALUES (?)''', (genre, ))
+    db_handler.execute('SELECT id FROM Genre WHERE name = ?', (genre, ))
+    genre_id = db_handler.fetchone()[0]
+
+
+    db_handler.execute('''
     INSERT OR REPLACE INTO Track
-    (title, album_id, len, rating, count)
-    VALUES (?, ?, ?, ?, ?)''', (name, album_id, length, rating, count))
+    (title, album_id, genre_id, len, rating, count)
+    VALUES (?, ?, ?, ?, ?, ?)''', (name, album_id, genre_id, length, rating, count))
 
 
 db_connection.commit()
 db_connection.close()
-
-# first_track = all_tracks_data[0]
-#
-# elements = []
-#
-# for element in first_track:
-#     elements.append(element)
-#
-# first_element = elements[0]
-# tiny_elements = []
-#
-# for tiny_el in first_element:
-#     tiny_elements.append(tiny_el)
 
 print('hi')
